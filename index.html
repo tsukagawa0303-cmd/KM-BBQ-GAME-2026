@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中秋夯霸！高名祝您中秋節快樂！</title>
+    <title>中秋夯霸王</title>
     <style>
         body {
             background-color: #1a1a1a;
@@ -30,7 +30,97 @@
             position: relative;
         }
 
-        /* 1. 頂部夜空區 */
+        /* === 遊戲三大圖層切換 === */
+        .game-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            z-index: 10;
+            background-color: #2c3e50;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* 1. 首頁/規則說明視覺 */
+        #start-screen {
+            padding: 30px 20px;
+            justify-content: space-between;
+            align-items: center;
+            background-image: linear-gradient(to bottom, #2c3e50, #1e272e);
+            text-align: center;
+        }
+        .game-logo {
+            font-size: 38px;
+            font-weight: bold;
+            color: #f1c40f;
+            text-shadow: 3px 3px 0px #c0392b, 0 0 20px rgba(241,196,15,0.4);
+            margin-top: 40px;
+            letter-spacing: 2px;
+        }
+        .rule-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #e67e22;
+            border-radius: 15px;
+            padding: 20px;
+            width: 85%;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: left;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .rule-box h3 {
+            margin-top: 0;
+            color: #e67e22;
+            text-align: center;
+            font-size: 18px;
+            border-bottom: 1px solid #e67e22;
+            padding-bottom: 8px;
+        }
+        .rule-box ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+        .rule-box li {
+            margin-bottom: 8px;
+        }
+        #audio-status {
+            font-size: 13px;
+            color: #bdc3c7;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        .menu-btn {
+            width: 85%;
+            height: 55px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #27ae60;
+            margin-bottom: 30px;
+            transition: all 0.1s;
+        }
+        .menu-btn:active {
+            box-shadow: 0 1px 0 #27ae60;
+            transform: translateY(4px);
+        }
+        .menu-btn:disabled {
+            background-color: #7f8c8d;
+            box-shadow: 0 5px 0 #95a5a6;
+            cursor: not-allowed;
+        }
+
+        /* 2. 遊戲主畫面樣式 */
         .sky-zone {
             height: 140px;
             background-image: url('img/sky_bg.png'); 
@@ -54,7 +144,6 @@
         #level-title { margin: 0; font-size: 18px; color: #f39c12; z-index: 2; margin-top: 50px; font-weight: bold; text-shadow: 1px 1px 3px #000;}
         #score-box { font-size: 15px; color: #fff; z-index: 2; margin-top: 2px; text-shadow: 1px 1px 3px #000;}
 
-        /* 2. 中部 KID 角色區 */
         .character-zone {
             height: 150px;
             background-color: #2c3e50;
@@ -86,7 +175,6 @@
             z-index: 3;
         }
 
-        /* 3. 中下部：烤網區 */
         .grill-zone {
             height: 260px;
             padding: 12px;
@@ -121,7 +209,6 @@
             z-index: 2;
         }
 
-        /* 食材插槽 */
         .slot {
             width: 75px;
             height: 65px;
@@ -137,10 +224,6 @@
             display: none; 
             justify-content: center;
             align-items: center;
-            font-size: 12px;
-            font-weight: bold;
-            color: #fff;
-            transition: all 0.1s;
             z-index: 5;
             background-size: contain;
             background-repeat: no-repeat;
@@ -150,7 +233,6 @@
             transform: scale(1.2);
         }
         
-        /* 夾子插槽 */
         .tongs {
             width: 75px;
             height: 65px;
@@ -162,15 +244,12 @@
             background-position: center;
         }
 
-        /* 4. 底部操作區 */
         .control-zone {
             flex: 1;
             background-color: #1e272e;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 8px;
             border-top: 5px solid #e67e22;
         }
         #grill-btn {
@@ -190,19 +269,6 @@
             box-shadow: 0 1px 0 #c0392b;
             transform: translateY(4px);
         }
-        #grill-btn:disabled {
-            background-color: #7f8c8d;
-            box-shadow: 0 5px 0 #95a5a6;
-        }
-        #restart-btn {
-            background: none;
-            border: 1px solid #7f8c8d;
-            color: #7f8c8d;
-            padding: 4px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
 
         #rating-display {
             position: absolute;
@@ -219,56 +285,145 @@
         .Great { color: #2ecc71; }
         .Good { color: #3498db; }
         .Miss { color: #e74c3c; }
+
+        /* 3. 結算/成績頁面樣式 */
+        #result-screen {
+            padding: 30px 20px;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #11171a;
+            text-align: center;
+        }
+        .result-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e67e22;
+            margin-top: 30px;
+        }
+        .final-score-box {
+            margin: 20px 0;
+        }
+        .final-score-label {
+            font-size: 16px;
+            color: #bdc3c7;
+        }
+        .final-score-num {
+            font-size: 56px;
+            font-weight: bold;
+            color: #f1c40f;
+            text-shadow: 0 0 15px rgba(241,196,15,0.5);
+        }
+        .reward-card {
+            background: linear-gradient(135deg, #d35400, #c0392b);
+            border: 3px dashed #f1c40f;
+            border-radius: 15px;
+            padding: 20px;
+            width: 85%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        .reward-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            color: #f1c40f;
+        }
+        .reward-card p {
+            margin: 0;
+            font-size: 14px;
+            color: #fff;
+            line-height: 1.5;
+        }
+        .reward-note {
+            font-size: 12px;
+            color: #f39c12;
+            margin-top: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div id="phone-container">
-    <div class="sky-zone">
-        <div class="moon"></div>
-        <div id="level-title">Level 1: 鮮嫩豬五花</div>
-        <div id="score-box">得分: <span id="total-score">0</span></div>
-    </div>
-
-    <div class="character-zone">
-        <div id="kid-character">
-            <img id="kid-img" src="img/kid_idle.png" alt="童軍公仔">
-        </div>
-        <div id="game-state">點擊下方按鈕載入音效...</div>
-    </div>
-
-    <div id="rating-display"></div>
-
-    <div class="grill-zone">
-        <div class="grill-floor">
-            <div class="floor-label">上半網 (第 1, 2 拍點)</div>
-            <div class="slot">
-                <div class="meat" id="meat-0"></div>
-                <div class="tongs" id="tongs-0"></div>
-            </div>
-            <div class="slot">
-                <div class="meat" id="meat-1"></div>
-                <div class="tongs" id="tongs-1"></div>
-            </div>
-        </div>
+    
+    <div id="start-screen" class="game-screen">
+        <div class="game-logo">中秋夯霸王！高名祝您中秋佳節愉快！</div>
         
-        <div class="grill-floor">
-            <div class="floor-label">下半網 (第 3, 4 拍點)</div>
-            <div class="slot">
-                <div class="meat" id="meat-2"></div>
-                <div class="tongs" id="tongs-2"></div>
+        <div class="rule-box">
+            <h3>🔥 夯肉遊戲規則</h3>
+            <ul>
+                <li><strong>聽示範放肉：</strong>小童軍會示範節奏將生肉放到烤網上。</li>
+                <li><strong>聽口令準備：</strong>聽到<strong>哨音 與「嗨！」口令</strong>且童軍公仔雙手向前招呼時，代表準備交棒給你。</li>
+                <li><strong>精準夾肉：</strong>順著剛剛的節奏，按下<strong>「空白鍵」</strong>或點擊<strong>「夾肉！」按鈕</strong>把熟肉完美夾起！</li>
+            </ul>
+            <div id="audio-status">正在熱機準備食材（音效載入中）...</div>
+        </div>
+
+        <button id="start-game-btn" class="menu-btn" disabled>載入中...</button>
+    </div>
+
+    <div id="main-game-screen" class="game-screen hidden">
+        <div class="sky-zone">
+            <div class="moon"></div>
+            <div id="level-title">Level 1: 鮮嫩豬五花</div>
+            <div id="score-box">得分: <span id="total-score">0</span></div>
+        </div>
+
+        <div class="character-zone">
+            <div id="kid-character">
+                <img id="kid-img" src="img/kid_idle.png" alt="童軍公仔">
             </div>
-            <div class="slot">
-                <div class="meat" id="meat-3"></div>
-                <div class="tongs" id="tongs-3"></div>
+            <div id="game-state">準備烤肉...</div>
+        </div>
+
+        <div id="rating-display"></div>
+
+        <div class="grill-zone">
+            <div class="grill-floor">
+                <div class="floor-label">上半網 (第 1, 2 拍點)</div>
+                <div class="slot">
+                    <div class="meat" id="meat-0"></div>
+                    <div class="tongs" id="tongs-0"></div>
+                </div>
+                <div class="slot">
+                    <div class="meat" id="meat-1"></div>
+                    <div class="tongs" id="tongs-1"></div>
+                </div>
             </div>
+            
+            <div class="grill-floor">
+                <div class="floor-label">下半網 (第 3, 4 拍點)</div>
+                <div class="slot">
+                    <div class="meat" id="meat-2"></div>
+                    <div class="tongs" id="tongs-2"></div>
+                </div>
+                <div class="slot">
+                    <div class="meat" id="meat-3"></div>
+                    <div class="tongs" id="tongs-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-zone">
+            <button id="grill-btn">開始聽示範</button>
         </div>
     </div>
 
-    <div class="control-zone">
-        <button id="grill-btn">初始化音效</button>
-        <button id="restart-btn">🔄 重新開始</button>
+    <div id="result-screen" class="game-screen hidden">
+        <div class="result-title">🎉 夯肉盛宴結束！</div>
+        
+        <div class="final-score-box">
+            <div class="final-score-label">您的最終總得分</div>
+            <div id="final-score-val" class="final-score-num">0</div>
+        </div>
+
+        <div class="reward-card">
+            <h4>🎁 中秋好禮兌換券</h4>
+            <p>感謝您參與高名中秋夯霸王挑戰！<br><strong>現在立刻截圖此畫面</strong>，至高名教育集團各分班，即可換取精美中秋好禮乙份！</p>
+            <div class="reward-note">※ 每人限兌換乙次，數量有限送完為止</div>
+        </div>
+
+        <button id="rematch-btn" class="menu-btn" style="background-color: #e67e22; box-shadow: 0 5px 0 #d35400;">🔄 再玩一次</button>
     </div>
+
 </div>
 
 <script>
@@ -276,7 +431,7 @@ const levels = [
     { name: "Level 1: 鮮嫩豬五花", bpm: 120, pattern: [1, 2, 3, 4], imgRaw: "img/meat1_raw.png", imgCooked: "img/meat1_cooked.png", imgBurnt: "img/meat1_burnt.png" },
     { name: "Level 2: 醬汁香腸",   bpm: 120, pattern: [1, 1.5, 3, 3.5], imgRaw: "img/meat2_raw.png", imgCooked: "img/meat2_cooked.png", imgBurnt: "img/meat2_burnt.png" },
     { name: "Level 3: 彈牙鮮蝦",   bpm: 120, pattern: [1, 2, 2.66, 3.33], imgRaw: "img/meat3_raw.png", imgCooked: "img/meat3_cooked.png", imgBurnt: "img/meat3_burnt.png" },
-    { name: "Level 4: 豪華和牛",   bpm: 120, pattern: [1, 3, 3.5, 4], imgRaw: "img/meat4_raw.png", imgCooked: "img/meat4_cooked.png", imgBurnt: "img/meat4_burnt.png" }
+    { name: "Level 4: 豪華和牛",   bpm: 120, pattern: [1, 1.5, 2, 2.5], imgRaw: "img/meat4_raw.png", imgCooked: "img/meat4_cooked.png", imgBurnt: "img/meat4_burnt.png" }
 ];
 
 let currentLevelIdx = 0;
@@ -293,29 +448,40 @@ let audioCtx = null;
 let soundBuffers = { spawn: null, cue: null, hit: null };
 let audioLoaded = false;
 
+// 頁面生命週期：自動觸發音效加載
+window.addEventListener('DOMContentLoaded', () => {
+    autoInitAudioEngine();
+});
+
 async function loadSound(url) {
     const response = await fetch(url);
     const arrayBuffer = await response.arrayBuffer();
     return await audioCtx.decodeAudioData(arrayBuffer);
 }
 
-async function initAudioEngine() {
-    if (audioCtx) return;
+// 自動初始化與加載音效 (無須用戶點擊按鈕)
+async function autoInitAudioEngine() {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    document.getElementById("game-state").innerText = "⏳ 正在載入音效檔...";
     
     try {
         soundBuffers.spawn = await loadSound('img/sound_spawn.mp3');
         soundBuffers.cue = await loadSound('img/sound_cue.mp3');
         soundBuffers.hit = await loadSound('img/sound_hit.mp3');
         audioLoaded = true;
-        document.getElementById("game-state").innerText = "✅ 音效載入完成！";
-        document.getElementById("grill-btn").innerText = "開始聽示範";
+        
+        document.getElementById("audio-status").innerText = "✅ 食材與音效備妥！隨時可開烤！";
+        document.getElementById("audio-status").style.color = "#2ecc71";
+        const startBtn = document.getElementById("start-game-btn");
+        startBtn.disabled = false;
+        startBtn.innerText = "進入挑戰 (或按空白鍵)";
     } catch (error) {
-        console.error("音效載入失敗，改用電子音備援方案", error);
+        console.error("實體音效加載失敗，改用電子音備援方案", error);
         audioLoaded = false;
-        document.getElementById("game-state").innerText = "⚠️ 找不到音效，已用模擬音效替代";
-        document.getElementById("grill-btn").innerText = "開始聽示範";
+        document.getElementById("audio-status").innerText = "⚠️ 音效熱機受阻，已啟動後備模擬音效！";
+        document.getElementById("audio-status").style.color = "#f39c12";
+        const startBtn = document.getElementById("start-game-btn");
+        startBtn.disabled = false;
+        startBtn.innerText = "進入挑戰 (或按空白鍵)";
     }
 }
 
@@ -348,6 +514,14 @@ function playTone(freq, duration) {
     osc.stop(audioCtx.currentTime + duration);
 }
 
+// 切換至主遊戲畫面
+function enterGame() {
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    document.getElementById("start-screen").classList.add("hidden");
+    document.getElementById("main-game-screen").classList.remove("hidden");
+    resetGame();
+}
+
 function resetGrillVisuals() {
     for(let i=0; i<4; i++) {
         const m = document.getElementById(`meat-${i}`);
@@ -371,15 +545,12 @@ function resetGame() {
     document.getElementById("game-state").innerText = "準備烤肉...";
     document.getElementById("rating-display").innerText = "";
     resetGrillVisuals();
-    document.getElementById("grill-btn").disabled = false;
-    document.getElementById("grill-btn").innerText = audioCtx ? "開始聽示範" : "初始化音效";
+    const mainBtn = document.getElementById("grill-btn");
+    mainBtn.disabled = false;
+    mainBtn.innerText = "開始聽示範";
 }
 
 function startGameLoop() {
-    if (!audioCtx) {
-        initAudioEngine();
-        return;
-    }
     if (isPlaying) return;
     
     resetGrillVisuals();
@@ -500,7 +671,6 @@ function handleInput() {
     
     updateKidImg(points);
 
-    // 🛠️ 這裡已經修改：把括號和 ms 誤差拿掉，只顯示單純判定文字（例如 "Excellent"）
     const ratingDisplay = document.getElementById("rating-display");
     ratingDisplay.innerText = rating;
     ratingDisplay.className = rating;
@@ -537,28 +707,61 @@ function endLevel() {
         document.getElementById("game-state").style.color = "#3498db";
         currentLevelIdx++;
     } else {
-        document.getElementById("game-state").innerText = "🏆 恭喜通關中秋夯霸！";
-        document.getElementById("game-state").style.color = "#9b59b6";
-        mainBtn.disabled = true;
+        // 所有關卡結束，進入成績結算頁面
+        setTimeout(() => {
+            showResultPage();
+        }, 1500);
     }
 }
 
-const mainBtn = document.getElementById("grill-btn");
-const restartBtn = document.getElementById("restart-btn");
+// 顯示最終成績結算頁
+function showResultPage() {
+    document.getElementById("main-game-screen").classList.add("hidden");
+    document.getElementById("result-screen").classList.remove("hidden");
+    document.getElementById("final-score-val").innerText = score;
+}
 
+// 重新回到規則首頁，再玩一次
+function restartToMenu() {
+    document.getElementById("result-screen").classList.add("hidden");
+    document.getElementById("start-screen").classList.remove("hidden");
+    resetGame();
+}
+
+// 事件監聽綁定
+document.getElementById("start-game-btn").addEventListener('click', enterGame);
+document.getElementById("rematch-btn").addEventListener('click', restartToMenu);
+
+const mainBtn = document.getElementById("grill-btn");
 mainBtn.addEventListener('click', function(e) {
-    if (!audioCtx) initAudioEngine();
-    else if (!isPlaying) startGameLoop();
+    if (!isPlaying) startGameLoop();
     else if (!isListening) handleInput();
 });
-restartBtn.addEventListener('click', resetGame);
 
+// 全域鍵盤事件 (支援空白鍵操作)
 window.addEventListener('keydown', function(e) {
     if (e.code === 'Space') {
         e.preventDefault();
-        if (!audioCtx) initAudioEngine();
-        else if (!isListening && isPlaying) handleInput();
-        else if (!isPlaying && currentLevelIdx < levels.length) startGameLoop();
+        
+        // 1. 如果在首頁，按空白鍵且音效熱機完畢，即可進入遊戲
+        if (!document.getElementById("start-screen").classList.contains("hidden")) {
+            const startBtn = document.getElementById("start-game-btn");
+            if (!startBtn.disabled) enterGame();
+            return;
+        }
+        
+        // 2. 如果在遊戲中，按空白鍵觸發動作
+        if (!document.getElementById("main-game-screen").classList.contains("hidden")) {
+            if (!isListening && isPlaying) handleInput();
+            else if (!isPlaying && currentLevelIdx < levels.length) startGameLoop();
+            return;
+        }
+
+        // 3. 如果在成績頁，按空白鍵可回到首頁
+        if (!document.getElementById("result-screen").classList.contains("hidden")) {
+            restartToMenu();
+            return;
+        }
     }
 });
 </script>
