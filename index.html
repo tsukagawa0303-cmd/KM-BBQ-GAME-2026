@@ -741,11 +741,29 @@ document.getElementById("start-game-btn").addEventListener('click', enterGame);
 document.getElementById("rematch-btn").addEventListener('click', restartToMenu);
 
 const mainBtn = document.getElementById("grill-btn");
-mainBtn.addEventListener('click', function(e) {
-    if (isEndingTransition) return; 
+
+// 💡 內建防重複觸發旗標
+let isProcessingInput = false; 
+
+function handleButtonAction(e) {
+    if (e) {
+        e.preventDefault(); // 🛑 核心：阻止瀏覽器將 touch 事件轉化為 click，避免觸發兩次
+        e.stopPropagation(); // 🛑 阻止事件向上冒泡
+    }
+    
+    if (isEndingTransition || isProcessingInput) return;
+    
+    // 鎖定 100ms 內不接受重複點擊（去彈跳防抖）
+    isProcessingInput = true;
+    setTimeout(() => { isProcessingInput = false; }, 100);
+
     if (!isPlaying) startGameLoop();
     else if (!isListening) handleInput();
-});
+}
+
+// 🔥 同時支援點擊與觸控，但透過 preventDefault 阻斷重複執行
+mainBtn.addEventListener('pointerdown', handleButtonAction);
+mainBtn.addEventListener('click', handleButtonAction);
 
 window.addEventListener('keydown', function(e) {
     if (e.code === 'Space') {
