@@ -544,6 +544,8 @@ function resetGame() {
     isPlaying = false;
     isListening = false;
     isEndingTransition = false; 
+    playerClicksCount = 0;       // 👈 原本有的
+    lastTriggeredClickCount = 0; // 💡 加上這行！確保重新開始時鎖是開的 
     missedCheckTimers.forEach(t => clearTimeout(t));
     missedCheckTimers = [];
     document.getElementById("total-score").innerText = "0";
@@ -600,6 +602,7 @@ function startGameLoop() {
 
     setTimeout(() => {
         isListening = false;
+        lastTriggeredClickCount = 0; // 💡 聽完示範、換玩家時，計步器也歸零準備
         document.getElementById("game-state").innerText = "🔥 順著剛才的節奏夾起來！";
         document.getElementById("game-state").style.color = "#2ecc71";
         document.getElementById("grill-btn").disabled = false; // 👈 確保這行有在提示「夾肉！」時把按鈕打開
@@ -742,39 +745,45 @@ document.getElementById("rematch-btn").addEventListener('click', restartToMenu);
 
 const mainBtn = document.getElementById("grill-btn");
 
+// 💡 建立一個「目前的點擊步數紀錄」
+let lastTriggeredClickCount = 0; 
+
 function handleButtonAction(e) {
     if (e) {
         e.preventDefault();
         e.stopPropagation();
     }
     
-    // 如果按鈕已經被禁用，或者在最後關卡轉場中，直接攔截
-    if (mainBtn.disabled || isEndingTransition) return;
-    
-    // 🛑 核心物理鎖：立刻禁用按鈕，從硬體層面斷絕連點可能
-    mainBtn.disabled = true;
+    if (isEndingTransition) return;
 
-    // 執行夾肉或開始遊戲
+    // 1. 如果還沒開始遊戲，點擊進入遊戲 loop
     if (!isPlaying) {
+        lastTriggeredClickCount = 0; // 重設步數
         startGameLoop();
-        // 開始聽示範時，startGameLoop 內部本來就會維持 disabled，所以這裡不用幫它解鎖
-    } else if (!isListening) {
-        handleInput();
-        
-        // 如果不是最後一關結束（如果是最後一關，endLevel 會接手維持禁用）
-        if (!isEndingTransition) {
-            // 💡 給予 250 毫秒的硬性冷卻時間，時間到才允許下一次點擊
-            setTimeout(() => {
-                // 只有在遊戲還在進行中、且不是聽示範狀態下，才把按鈕還給玩家
-                if (isPlaying && !isListening) {
-                    mainBtn.disabled = false;
-                }
-            }, 250);
-        }
+        return;
     }
+
+    // 2. 遊戲進行中：如果是聽示範狀態，直接攔截
+    if (isListening) return;
+
+    // 🛑 核心計步鎖：如果點擊引發的計數還沒進到下一步，代表這是手機瀏覽器的「同一次穿透連點」，直接攔截！
+    // playerClicksCount 代表玩家「正要嘗試點擊」的第幾個肉（從 0 開始累加）
+    if (playerClicksCount > lastTriggeredClickCount) {
+        return; 
+    }
+
+    // 只有通過檢查，才真正執行夾肉判定
+    handleInput();
+    
+    // 成功執行完 handleInput 後，playerClicksCount 會自增 1
+    // 我們把紀錄更新，代表「這一步已經點過了，開放下一步」
+    lastTriggeredClickCount = playerClicksCount;
+
+    // 💡 防呆：如果已經夾完最後一片肉，按鈕會在 endLevel 被禁用，這裡就不做處理
 }
 
-// 徹底移除 pointerdown，只保留 click，並透過 disabled 來阻擋重複
+// 🔥 用 pointerdown 通常在手機上反應最即時，配合計步鎖就不怕雙擊問題了
+mainBtn.addEventListener('pointerdown', handleButtonAction);
 mainBtn.addEventListener('click', handleButtonAction);
 
 window.addEventListener('keydown', function(e) {
