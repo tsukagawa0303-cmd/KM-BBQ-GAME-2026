@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>中秋夯霸王！高名祝您中秋節快樂！</title>
     <style>
         body {
@@ -50,7 +50,7 @@
 
         /* 1. 首頁/規則說明視覺 */
         #start-screen {
-            padding: 30px 20px;
+            padding: 20px 20px 40px 20px; /* 💡 增加底部內距，把按鈕頂上去 */
             justify-content: space-between;
             align-items: center;
             background-image: linear-gradient(to bottom, #2c3e50, #1e272e);
@@ -61,17 +61,18 @@
             font-weight: bold;
             color: #f1c40f;
             text-shadow: 3px 3px 0px #c0392b, 0 0 20px rgba(241,196,15,0.4);
-            margin-top: 40px;
+            margin-top: 20px;
+            line-height: 1.2;
             letter-spacing: 2px;
         }
         .rule-box {
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid #e67e22;
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             width: 85%;
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 13px;
+            line-height: 1.5;
             text-align: left;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
@@ -79,22 +80,25 @@
             margin-top: 0;
             color: #e67e22;
             text-align: center;
-            font-size: 18px;
+            font-size: 17px;
             border-bottom: 1px solid #e67e22;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
         }
         .rule-box ul {
-            padding-left: 20px;
+            padding-left: 18px;
             margin-bottom: 0;
+            margin-top: 0;
         }
         .rule-box li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         #audio-status {
-            font-size: 13px;
+            font-size: 12px;
             color: #bdc3c7;
             margin-top: 5px;
             font-weight: bold;
+            text-align: center;
         }
         .menu-btn {
             width: 85%;
@@ -107,7 +111,7 @@
             border-radius: 12px;
             cursor: pointer;
             box-shadow: 0 5px 0 #27ae60;
-            margin-bottom: 30px;
+            margin-bottom: 20px; /* 💡 確保離絕對底部有一段安全距離 */
             transition: all 0.1s;
         }
         .menu-btn:active {
@@ -122,7 +126,7 @@
 
         /* 2. 遊戲主畫面樣式 */
         .sky-zone {
-            height: 140px;
+            height: 130px;
             background-image: url('img/sky_bg.png'); 
             background-size: cover;
             background-position: center;
@@ -133,19 +137,19 @@
             align-items: center;
         }
         .moon {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             background-image: url('img/moon.png'); 
             background-size: cover;
             position: absolute;
-            top: 15px;
+            top: 12px;
             z-index: 1;
         }
-        #level-title { margin: 0; font-size: 18px; color: #f39c12; z-index: 2; margin-top: 50px; font-weight: bold; text-shadow: 1px 1px 3px #000;}
+        #level-title { margin: 0; font-size: 18px; color: #f39c12; z-index: 2; margin-top: 45px; font-weight: bold; text-shadow: 1px 1px 3px #000;}
         #score-box { font-size: 15px; color: #fff; z-index: 2; margin-top: 2px; text-shadow: 1px 1px 3px #000;}
 
         .character-zone {
-            height: 150px;
+            height: 140px;
             background-color: #2c3e50;
             display: flex;
             justify-content: center;
@@ -153,8 +157,8 @@
             position: relative;
         }
         #kid-character {
-            width: 140px; 
-            height: 140px;
+            width: 130px; 
+            height: 130px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -176,7 +180,7 @@
         }
 
         .grill-zone {
-            height: 260px;
+            height: 250px;
             padding: 12px;
             box-sizing: border-box;
             display: flex;
@@ -244,6 +248,7 @@
             background-position: center;
         }
 
+        /* 💡 核心改動：加大底部控制區高度，並加上 padding-bottom 防止按鈕貼底 */
         .control-zone {
             flex: 1;
             background-color: #1e272e;
@@ -251,6 +256,8 @@
             justify-content: center;
             align-items: center;
             border-top: 5px solid #e67e22;
+            padding-bottom: 25px; /* 把按鈕往上頂，避開手機功能列 */
+            box-sizing: border-box;
         }
         #grill-btn {
             width: 80%;
@@ -268,11 +275,6 @@
         #grill-btn:active {
             box-shadow: 0 1px 0 #c0392b;
             transform: translateY(4px);
-        }
-        #grill-btn:disabled {
-            background-color: #7f8c8d;
-            box-shadow: 0 5px 0 #95a5a6;
-            cursor: not-allowed;
         }
 
         #rating-display {
@@ -293,7 +295,7 @@
 
         /* 3. 結算/成績頁面樣式 */
         #result-screen {
-            padding: 30px 20px;
+            padding: 20px 20px 40px 20px; /* 💡 同步加上安全下邊距 */
             justify-content: space-between;
             align-items: center;
             background-color: #11171a;
@@ -303,10 +305,10 @@
             font-size: 32px;
             font-weight: bold;
             color: #e67e22;
-            margin-top: 30px;
+            margin-top: 20px;
         }
         .final-score-box {
-            margin: 20px 0;
+            margin: 15px 0;
         }
         .final-score-label {
             font-size: 16px;
@@ -322,25 +324,25 @@
             background: linear-gradient(135deg, #d35400, #c0392b);
             border: 3px dashed #f1c40f;
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             width: 85%;
             box-shadow: 0 8px 20px rgba(0,0,0,0.5);
         }
         .reward-card h4 {
-            margin: 0 0 10px 0;
-            font-size: 20px;
+            margin: 0 0 8px 0;
+            font-size: 19px;
             color: #f1c40f;
         }
         .reward-card p {
             margin: 0;
-            font-size: 14px;
+            font-size: 13px;
             color: #fff;
             line-height: 1.5;
         }
         .reward-note {
-            font-size: 12px;
+            font-size: 11px;
             color: #f39c12;
-            margin-top: 10px;
+            margin-top: 8px;
             font-weight: bold;
         }
     </style>
@@ -349,7 +351,6 @@
 
 <div id="phone-container">
     
-    <!-- 🛑 圖層一：首頁與規則說明 -->
     <div id="start-screen" class="game-screen">
         <div class="game-logo">中秋夯霸王<br>高名祝您中秋節快樂！</div>
         
@@ -366,7 +367,6 @@
         <button id="start-game-btn" class="menu-btn" disabled>載入中...</button>
     </div>
 
-    <!-- 🎮 圖層二：遊戲主要戰場 -->
     <div id="main-game-screen" class="game-screen hidden">
         <div class="sky-zone">
             <div class="moon"></div>
@@ -414,7 +414,6 @@
         </div>
     </div>
 
-    <!-- 🏆 圖層三：最終成績結算頁面 -->
     <div id="result-screen" class="game-screen hidden">
         <div class="result-title">🎉 夯肉盛宴結束！</div>
         
@@ -435,7 +434,6 @@
 </div>
 
 <script>
-// 🛠️ 1. 第四關的節奏已修改為 [1, 3, 3.5, 4]
 const levels = [
     { name: "Level 1: 鮮嫩豬五花", bpm: 120, pattern: [1, 2, 3, 4], imgRaw: "img/meat1_raw.png", imgCooked: "img/meat1_cooked.png", imgBurnt: "img/meat1_burnt.png" },
     { name: "Level 2: 醬汁香腸",   bpm: 120, pattern: [1, 1.5, 3, 3.5], imgRaw: "img/meat2_raw.png", imgCooked: "img/meat2_cooked.png", imgBurnt: "img/meat2_burnt.png" },
@@ -450,7 +448,7 @@ let targetTimestamps = [];
 let playerClicksCount = 0;
 let isListening = false;
 let isPlaying = false;
-let isEndingTransition = false; // 新增：用來記錄是否正在進行最後一關的結算動畫，鎖定空白鍵
+let isEndingTransition = false; 
 let beatDuration = 0;
 let missedCheckTimers = [];
 
@@ -545,7 +543,7 @@ function resetGame() {
     score = 0;
     isPlaying = false;
     isListening = false;
-    isEndingTransition = false; // 重設防呆狀態
+    isEndingTransition = false; 
     missedCheckTimers.forEach(t => clearTimeout(t));
     missedCheckTimers = [];
     document.getElementById("total-score").innerText = "0";
@@ -559,7 +557,7 @@ function resetGame() {
 }
 
 function startGameLoop() {
-    if (isPlaying || isEndingTransition) return; // 如果在結算轉場中，禁止開始
+    if (isPlaying || isEndingTransition) return; 
     
     resetGrillVisuals();
     missedCheckTimers.forEach(t => clearTimeout(t));
@@ -715,9 +713,8 @@ function endLevel() {
         document.getElementById("game-state").style.color = "#3498db";
         currentLevelIdx++;
     } else {
-        // 🛠️ 2. 第四關結束後的防呆優化：不給點擊按鈕、不接收空白鍵
         isEndingTransition = true; 
-        mainBtn.disabled = true; // 徹底封鎖按鈕點擊
+        mainBtn.disabled = true; 
         mainBtn.innerText = "結算中...";
         document.getElementById("game-state").innerText = "🏁 挑戰完成！正在計算總分...";
         document.getElementById("game-state").style.color = "#9b59b6";
@@ -745,7 +742,7 @@ document.getElementById("rematch-btn").addEventListener('click', restartToMenu);
 
 const mainBtn = document.getElementById("grill-btn");
 mainBtn.addEventListener('click', function(e) {
-    if (isEndingTransition) return; // 如果在轉場中，不予理會
+    if (isEndingTransition) return; 
     if (!isPlaying) startGameLoop();
     else if (!isListening) handleInput();
 });
@@ -753,25 +750,20 @@ mainBtn.addEventListener('click', function(e) {
 window.addEventListener('keydown', function(e) {
     if (e.code === 'Space') {
         e.preventDefault();
-        
-        // 如果第四關結束正要進入成績單，全面拒絕任何空白鍵操作，防止重疊觸發
         if (isEndingTransition) return;
 
-        // 1. 首頁按空白鍵
         if (!document.getElementById("start-screen").classList.contains("hidden")) {
             const startBtn = document.getElementById("start-game-btn");
             if (!startBtn.disabled) enterGame();
             return;
         }
         
-        // 2. 遊戲中按空白鍵
         if (!document.getElementById("main-game-screen").classList.contains("hidden")) {
             if (!isListening && isPlaying) handleInput();
             else if (!isPlaying && currentLevelIdx < levels.length) startGameLoop();
             return;
         }
 
-        // 3. 成績頁按空白鍵
         if (!document.getElementById("result-screen").classList.contains("hidden")) {
             restartToMenu();
             return;
