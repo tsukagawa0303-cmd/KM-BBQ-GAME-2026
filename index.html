@@ -602,7 +602,7 @@ function startGameLoop() {
         isListening = false;
         document.getElementById("game-state").innerText = "🔥 順著剛才的節奏夾起來！";
         document.getElementById("game-state").style.color = "#2ecc71";
-        document.getElementById("grill-btn").disabled = false;
+        document.getElementById("grill-btn").disabled = false; // 👈 確保這行有在提示「夾肉！」時把按鈕打開
         document.getElementById("grill-btn").innerText = "🥢 夾肉！";
         
         startTime = performance.now();
@@ -742,27 +742,39 @@ document.getElementById("rematch-btn").addEventListener('click', restartToMenu);
 
 const mainBtn = document.getElementById("grill-btn");
 
-// 💡 內建防重複觸發旗標
-let isProcessingInput = false; 
-
 function handleButtonAction(e) {
     if (e) {
-        e.preventDefault(); // 🛑 核心：阻止瀏覽器將 touch 事件轉化為 click，避免觸發兩次
-        e.stopPropagation(); // 🛑 阻止事件向上冒泡
+        e.preventDefault();
+        e.stopPropagation();
     }
     
-    if (isEndingTransition || isProcessingInput) return;
+    // 如果按鈕已經被禁用，或者在最後關卡轉場中，直接攔截
+    if (mainBtn.disabled || isEndingTransition) return;
     
-    // 鎖定 100ms 內不接受重複點擊（去彈跳防抖）
-    isProcessingInput = true;
-    setTimeout(() => { isProcessingInput = false; }, 100);
+    // 🛑 核心物理鎖：立刻禁用按鈕，從硬體層面斷絕連點可能
+    mainBtn.disabled = true;
 
-    if (!isPlaying) startGameLoop();
-    else if (!isListening) handleInput();
+    // 執行夾肉或開始遊戲
+    if (!isPlaying) {
+        startGameLoop();
+        // 開始聽示範時，startGameLoop 內部本來就會維持 disabled，所以這裡不用幫它解鎖
+    } else if (!isListening) {
+        handleInput();
+        
+        // 如果不是最後一關結束（如果是最後一關，endLevel 會接手維持禁用）
+        if (!isEndingTransition) {
+            // 💡 給予 250 毫秒的硬性冷卻時間，時間到才允許下一次點擊
+            setTimeout(() => {
+                // 只有在遊戲還在進行中、且不是聽示範狀態下，才把按鈕還給玩家
+                if (isPlaying && !isListening) {
+                    mainBtn.disabled = false;
+                }
+            }, 250);
+        }
+    }
 }
 
-// 🔥 同時支援點擊與觸控，但透過 preventDefault 阻斷重複執行
-mainBtn.addEventListener('pointerdown', handleButtonAction);
+// 徹底移除 pointerdown，只保留 click，並透過 disabled 來阻擋重複
 mainBtn.addEventListener('click', handleButtonAction);
 
 window.addEventListener('keydown', function(e) {
