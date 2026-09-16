@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>中秋夯霸王！高名祝您中秋節快樂！</title>
+    <title>高名祝您中秋節快樂！中秋夯霸王！</title>
     <style>
         body {
             background-color: #1a1a1a;
@@ -76,6 +76,12 @@
             font-weight: bold;
             line-height: 1.4;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: soundNoticeFloat 1.2s ease-in-out infinite;
+        }
+
+        @keyframes soundNoticeFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-7px); }
         }
 
         .rule-box {
@@ -412,14 +418,14 @@
 <div id="phone-container">
     
     <div id="start-screen" class="game-screen">
-        <div class="game-logo">中秋夯霸王<br>高名祝您中秋節快樂！</div>
+        <div class="game-logo">高名祝您中秋節快樂！<br>中秋夯霸王</div>
 
         <div class="sound-notice">🔊 此為節奏小遊戲，請開啟聲音遊玩</div>
         
         <div class="rule-box">
             <h3>🔥 夯肉遊戲規則</h3>
             <ul>
-                <li><strong>聽示範放肉：</strong>小童軍會示範節奏將生肉放到烤網上。</li>
+                <li><strong>聆聽示範節奏：</strong>小童軍會一邊將生肉放置烤網上，並撥放示範節奏</li>
                 <li><strong>聽口令準備：</strong>聽到<strong>「嗶！」哨聲</strong>且童軍公仔雙手向前招呼時，代表準備交棒給你。</li>
                 <li><strong>精準夾肉：</strong>順著剛剛的節奏，按下<strong>「空白鍵」</strong>或點擊<strong>「夾肉！」按鈕</strong>把熟肉完美夾起！</li>
             </ul>
@@ -629,6 +635,7 @@ function startGameLoop() {
     document.getElementById("game-state").innerText = "👂 聆聽示範放肉...";
     document.getElementById("game-state").style.color = "#ffbe76";
     document.getElementById("grill-btn").disabled = true;
+    document.getElementById("grill-btn").innerText = "聆聽示範節奏";
     
     isPlaying = true;
     isListening = true;
@@ -797,7 +804,7 @@ function showResultPage() {
         fbPageBtn.style.display = "flex";
         resultMessage.innerHTML = `
             <div class="reward-card">
-                <h4>🎉 恭喜達標！50元超商商品卡等你領</h4>
+                <h4>🎉 恭喜達標！獲50元超商商品卡</h4>
                 <p style="text-align:left;">
                     1️⃣ <strong>截圖成績：</strong>保存本次 2,500 分以上結算畫面。<br>
                     2️⃣ <strong>完成社群任務：</strong>官方 Facebook 貼文按讚，並公開分享至個人 FB。<br>
