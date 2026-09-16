@@ -850,19 +850,13 @@ function handleButtonAction(e) {
         startGameLoop();
         // 開始聽示範時，startGameLoop 內部本來就會維持 disabled，所以這裡不用幫它解鎖
     } else if (!isListening) {
-        handleInput();
-        
-        // 如果不是最後一關結束（如果是最後一關，endLevel 會接手維持禁用）
-        if (!isEndingTransition) {
-            // 💡 給予 250 毫秒的硬性冷卻時間，時間到才允許下一次點擊
-            setTimeout(() => {
-                // 只有在遊戲還在進行中、且不是聽示範狀態下，才把按鈕還給玩家
-                if (isPlaying && !isListening) {
-                    mainBtn.disabled = false;
-                }
-            }, 250);
-        }
+    handleInput();
+
+    // 夾肉階段立即恢復按鈕，避免手機快節奏連點被冷卻時間吃掉
+    if (isPlaying && !isListening && !isEndingTransition) {
+        mainBtn.disabled = false;
     }
+}
 }
 
 // 徹底移除 pointerdown，只保留 click，並透過 disabled 來阻擋重複
