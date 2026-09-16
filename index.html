@@ -65,6 +65,19 @@
             line-height: 1.2;
             letter-spacing: 2px;
         }
+        .sound-notice {
+            width: 85%;
+            box-sizing: border-box;
+            background: #f1c40f;
+            color: #2c3e50;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-size: 15px;
+            font-weight: bold;
+            line-height: 1.4;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
         .rule-box {
             background: rgba(0, 0, 0, 0.4);
             border: 2px solid #e67e22;
@@ -345,6 +358,53 @@
             margin-top: 8px;
             font-weight: bold;
         }
+
+        #result-message {
+            width: 100%;
+        }
+
+        #fb-page-btn {
+            display: none;
+            width: 85%;
+            min-height: 50px;
+            background-color: #1877f2;
+            color: white;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 12px;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 0 #0f5fc7;
+            box-sizing: border-box;
+            margin-top: 18px;
+        }
+
+        #result-screen.reward-achieved #rematch-btn {
+            margin-top: 28px;
+        }
+
+        .retry-card {
+            background: rgba(52, 73, 94, 0.9);
+            border: 2px solid #3498db;
+            border-radius: 15px;
+            padding: 15px;
+            width: 85%;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        .retry-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            color: #f1c40f;
+        }
+
+        .retry-card p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
@@ -353,12 +413,14 @@
     
     <div id="start-screen" class="game-screen">
         <div class="game-logo">中秋夯霸王<br>高名祝您中秋節快樂！</div>
+
+        <div class="sound-notice">🔊 此為節奏小遊戲，請開啟聲音遊玩</div>
         
         <div class="rule-box">
             <h3>🔥 夯肉遊戲規則</h3>
             <ul>
                 <li><strong>聽示範放肉：</strong>小童軍會示範節奏將生肉放到烤網上。</li>
-                <li><strong>聽口令準備：</strong>聽到<strong>「嗨！」口令</strong>且童軍公仔雙手向前招呼時，代表準備交棒給你。</li>
+                <li><strong>聽口令準備：</strong>聽到<strong>「嗶！」哨聲</strong>且童軍公仔雙手向前招呼時，代表準備交棒給你。</li>
                 <li><strong>精準夾肉：</strong>順著剛剛的節奏，按下<strong>「空白鍵」</strong>或點擊<strong>「夾肉！」按鈕</strong>把熟肉完美夾起！</li>
             </ul>
             <div id="audio-status">正在熱機準備食材（音效載入中）...</div>
@@ -422,12 +484,9 @@
             <div id="final-score-val" class="final-score-num">0</div>
         </div>
 
-        <div class="reward-card">
-            <h4>🎁 中秋好禮兌換券</h4>
-            <p>感謝您參與高名中秋夯霸王挑戰！<br><strong>現在立刻截圖此畫面</strong>，至高名教育集團各分班，即可換取精美中秋好禮乙份！</p>
-            <div class="reward-note">※ 每人限兌換乙次，數量有限送完為止</div>
-        </div>
+        <div id="result-message"></div>
 
+        <a id="fb-page-btn" href="https://www.facebook.com/km999edu" target="_blank" rel="noopener noreferrer">📘 點我前往官方FB粉絲專頁</a>
         <button id="rematch-btn" class="menu-btn" style="background-color: #e67e22; box-shadow: 0 5px 0 #d35400;">🔄 再玩一次</button>
     </div>
 
@@ -544,8 +603,6 @@ function resetGame() {
     isPlaying = false;
     isListening = false;
     isEndingTransition = false; 
-    playerClicksCount = 0;       // 👈 原本有的
-    lastTriggeredClickCount = 0; // 💡 加上這行！確保重新開始時鎖是開的 
     missedCheckTimers.forEach(t => clearTimeout(t));
     missedCheckTimers = [];
     document.getElementById("total-score").innerText = "0";
@@ -556,7 +613,6 @@ function resetGame() {
     const mainBtn = document.getElementById("grill-btn");
     mainBtn.disabled = false;
     mainBtn.innerText = "開始聽示範";
-    isTouchThrottled = false; // 💡 確保重開遊戲時鎖是開的
 }
 
 function startGameLoop() {
@@ -603,7 +659,6 @@ function startGameLoop() {
 
     setTimeout(() => {
         isListening = false;
-        lastTriggeredClickCount = 0; // 💡 聽完示範、換玩家時，計步器也歸零準備
         document.getElementById("game-state").innerText = "🔥 順著剛才的節奏夾起來！";
         document.getElementById("game-state").style.color = "#2ecc71";
         document.getElementById("grill-btn").disabled = false; // 👈 確保這行有在提示「夾肉！」時把按鈕打開
@@ -733,6 +788,31 @@ function showResultPage() {
     document.getElementById("main-game-screen").classList.add("hidden");
     document.getElementById("result-screen").classList.remove("hidden");
     document.getElementById("final-score-val").innerText = score;
+
+    const resultMessage = document.getElementById("result-message");
+    const resultScreen = document.getElementById("result-screen");
+    const fbPageBtn = document.getElementById("fb-page-btn");
+    if (score >= 2500) {
+        resultScreen.classList.add("reward-achieved");
+        fbPageBtn.style.display = "flex";
+        resultMessage.innerHTML = `
+            <div class="reward-card">
+                <h4>🎉 恭喜達標！50元超商商品卡等你領</h4>
+                <p style="text-align:left;">
+                    1️⃣ <strong>截圖成績：</strong>保存本次 2,500 分以上結算畫面。<br>
+                    2️⃣ <strong>完成社群任務：</strong>官方 Facebook 貼文按讚，並公開分享至個人 FB。<br>
+                    3️⃣ <strong>到班領獎：</strong>攜帶「達標截圖」＋「按讚分享畫面」，至高名任一分班出示並填寫領獎資料，即可領取 <strong>50元超商商品卡</strong>！
+                </p>
+            </div>`;
+    } else {
+        resultScreen.classList.remove("reward-achieved");
+        fbPageBtn.style.display = "none";
+        resultMessage.innerHTML = `
+            <div class="retry-card">
+                <h4>💪 差一點就達標了！</h4>
+                <p>挑戰 <strong>2,500 分</strong>，就有機會完成任務領取好禮！<br>抓準節奏，再挑戰一次吧！</p>
+            </div>`;
+    }
 }
 
 function restartToMenu() {
@@ -752,28 +832,33 @@ function handleButtonAction(e) {
         e.stopPropagation();
     }
     
-    // 1. 轉場防呆直接攔截
-    if (isEndingTransition) return;
+    // 如果按鈕已經被禁用，或者在最後關卡轉場中，直接攔截
+    if (mainBtn.disabled || isEndingTransition) return;
+    
+    // 🛑 核心物理鎖：立刻禁用按鈕，從硬體層面斷絕連點可能
+    mainBtn.disabled = true;
 
-    // 2. 如果還沒開始遊戲，點擊進入遊戲 loop
+    // 執行夾肉或開始遊戲
     if (!isPlaying) {
         startGameLoop();
-        if (mainBtn) mainBtn.blur(); // 💡 點擊後立刻移開焦點，防止電腦端按空白鍵重複觸發點擊
-        return;
+        // 開始聽示範時，startGameLoop 內部本來就會維持 disabled，所以這裡不用幫它解鎖
+    } else if (!isListening) {
+        handleInput();
+        
+        // 如果不是最後一關結束（如果是最後一關，endLevel 會接手維持禁用）
+        if (!isEndingTransition) {
+            // 💡 給予 250 毫秒的硬性冷卻時間，時間到才允許下一次點擊
+            setTimeout(() => {
+                // 只有在遊戲還在進行中、且不是聽示範狀態下，才把按鈕還給玩家
+                if (isPlaying && !isListening) {
+                    mainBtn.disabled = false;
+                }
+            }, 250);
+        }
     }
-
-    // 3. 遊戲進行中：如果是聽示範狀態，直接攔截
-    if (isListening) return;
-
-    // 4. 執行原本的夾肉邏輯
-    handleInput();
-    
-    // 5. 💡 電腦/手機端防連點核心：點擊後立刻強迫按鈕失去焦點
-    if (mainBtn) mainBtn.blur(); 
 }
 
-// 🛑 徹底拔除 pointerdown，只保留唯一的 click，從根源斷絕「點一下送兩個事件」的狀況
-mainBtn.removeEventListener('pointerdown', handleButtonAction); // 保險起見先移除
+// 徹底移除 pointerdown，只保留 click，並透過 disabled 來阻擋重複
 mainBtn.addEventListener('click', handleButtonAction);
 
 window.addEventListener('keydown', function(e) {
